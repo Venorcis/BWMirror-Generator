@@ -2,7 +2,66 @@
 
 This is the BWMirror Generator which is used to generate the Java classes that will mirror the ones found in BWAPI and automatically generate the C++ JNI glue that makes it all work.
 
-## Installing Pre-Requisites
+## Usage
+
+### Including BWMirror in your project
+
+If your project uses Maven, you can add a dependency to BWMirror:
+
+```
+<dependency>
+    <groupId>com.github.gered</groupId>
+    <artifactId>bwmirror</artifactId>
+    <version>2.6</version>
+</dependency>
+```
+
+If not, you can download the BWMirror JAR file from the [releases](https://github.com/gered/BWMirror-Generator/releases) page and include it as a dependency in your project.
+
+### Example code
+
+```java
+public class ExampleBot {
+    public void run() {
+        final Mirror mirror = new Mirror();
+
+        mirror.getModule().setEventListener(new DefaultBWListener() {
+            @Override
+            public void onStart() {
+                System.out.println("Starting game");
+                BWTA.readMap();
+                BWTA.analyze();
+            }
+
+            @Override
+            public void onEnd(boolean b) {
+                System.out.println("Game has ended");
+            }
+
+            @Override
+            public void onFrame() {
+                Game game = mirror.getGame();
+                Player self = game.self();
+
+                // TODO: awesome AI code here
+            }
+        });
+
+        // blocks indefinitely
+        mirror.startGame();
+    }
+
+    public static void main(String... args) {
+        new TestBot().run();
+    }
+}
+```
+
+## Building BWMirror
+
+This is a fair bit involved due to the nature of the project. If you want to contribute to BWMirror, read on.
+
+### Installing Pre-Requisites
 
 There are a number of pre-requisites needed before you can get started with the things in this repository.
 
@@ -39,7 +98,7 @@ https://bitbucket.org/auriarte/bwta2/downloads/
 Download and extract the BWTA files somewhere and take note of the location you extracted them to, creating a `BWTA_HOME` environment variable that points to this same location. e.g. "C:\dev\BWTAlib_2.2"
 
 
-## Running the Generator
+### Running the Generator
 
 If you've not already done so, clone the BWMirror-Generator repository.
 
@@ -59,7 +118,7 @@ The generator should have created a few things for us:
 
 Note that the `/manual-bwapi-src` directory has Java sources that will also be copied as-is to `/bwmirror/src/main/java/bwapi`. You can edit these classes from within `/manual-bwapi-src` as needed without worrying about auto-generated code or other build operations clobbering your changes.
 
-## Building `bwapi_bridge.dll`
+### Building `bwapi_bridge.dll`
 
 Open the Visual Studio 2013 project under `/bwapi_bridge` (bwapi_bridge.sln).
 
@@ -69,7 +128,7 @@ Build errors could occur if you have incorrectly set your `JAVA_HOME`, `BWAPI_HO
 
 When built successfully, you should see that `bwapi_bridge.dll` was copied from the build output to `/bwmirror/src/main/resources`.
 
-## Building and Testing BWMirror
+### Building and Testing BWMirror
 
 Open the Java Maven project in the `/bwmirror` directory in your Java IDE.
 
@@ -83,3 +142,6 @@ You can build and install BWMirror to your local Maven repository either within 
 
 To run the included test bot to verify everything, set up a run configuration in your IDE to run the project using the `main` method class `bwmirror.TestBot`. Once running and you see that it's waiting to connect to a Broodwar instance, run Chaoslauncher from your BWAPI installation and start up Broodwar and create a single player melee game with yourself and 1 computer player. Once in game, you should see some extra text display and your workers should start gathering minerals and new workers should start getting trained. The bot doesn't do anything else really, but this is a good test of everything.
 
+## License
+
+Licensed under LGPL3. See `LICENSE` for more details.
