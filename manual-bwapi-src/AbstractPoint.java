@@ -4,7 +4,7 @@ package bwapi;
  * Common ancestor for location based objects to simplify distance computation.
  * This will be refactored into interface with default methods when java 8 becomes widely used.
  *
- * Idea by Rafa³ Poniatowski
+ * Idea by RafaÂ³ Poniatowski
  */
 public abstract class AbstractPoint<T extends AbstractPoint> {
 

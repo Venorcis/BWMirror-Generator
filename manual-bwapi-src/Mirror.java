@@ -11,42 +11,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.zip.*;
 
-/**
- * <p>The API entry point. Standard use case:</p>
- * <ul>
- *     <li>Create a Mirror object and use {@link #getModule()} and then set an {@link AIModule}'s {@link BWEventListener}<br/>
- *     <li>Call {@link #startGame()} to init the API and connect to Broodwar, then launch Broodwar from ChaosLauncher.</li>
- *     <li>In you {@link BWEventListener#onStart()} method, receive the Game object by calling {@link #getGame()}</li>
- * </ul>
- * <br/>
- * <b>Example</b>
- * <pre>
- *     {@code
- *
- *     mirror.getModule().setEventListener(new DefaultBWListener()
- *     {
- *            public void onStart() {
- *                game = mirror.getGame();
- *                self = game.self();
- *                //initialization
- *                ....
- *            }
- *
- *           public void onUpdate() {
- *               for (Unit myUnit : self.getUnits()) {
- *                   //give orders to unit
- *                   ...
- *                }
- *           }
- *        });
- *     }
- *     mirror.startGame();
- * </pre>
-
- * <p><b>Note:</b> The Game object is initialized during the {@link #startGame()} as well as other BWMirror API's constants.
- * Do not use any API releated methods/fields prior to {@link #startGame()}.</p>
-
- */
 public class Mirror {
 
     private Game game;

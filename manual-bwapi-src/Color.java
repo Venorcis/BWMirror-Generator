@@ -13,12 +13,6 @@ public class Color {
 
     private int r, g, b;
 
-    /**
-     * Create a color using the color in the palette that is closest to the RGB color specified. This will check a number of colors in the pallet to see which is closest to the specified color so this function is relatively slow.
-     * @param r
-     * @param g
-     * @param b
-     */
     public Color(int r, int g, int b) {
         this.r = r;
         this.g = g;

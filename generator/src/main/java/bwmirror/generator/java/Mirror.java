@@ -16,7 +16,7 @@ import java.io.PrintStream;
  */
 public abstract class Mirror {
 
-    private static final boolean WRITE_DOC = true;
+    private static final boolean WRITE_DOC = false; // TODO: need to fix encoding / special character issues before we can leave enabled
 
     private static final boolean FORCE_WEB_DOCUMENTATION = true;
 
