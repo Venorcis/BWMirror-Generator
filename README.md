@@ -1,6 +1,8 @@
 # BWMirror API
 
-This is the BWMirror Generator which is used to generate the Java classes that will mirror the ones found in BWAPI and automatically generate the C++ JNI glue that makes it all work.
+A Java API for [BWAPI](http://bwapi.github.io/) and [BWTA2](https://bitbucket.org/auriarte/bwta2) allowing you to create Starcraft: Broodwar AIs using Java.
+
+This repository contains a "generator" project which is used to programmatically generate the  Java classes that will mirror the ones found in BWAPI/BWTA2 and automatically generate the C++ JNI glue that makes it all work together. It's fairly involved, but if you're just interested in writing a Starcraft AI in Java, then you don't need to worry about the details too much!
 
 ## Usage
 
@@ -34,7 +36,7 @@ public class ExampleBot {
             }
 
             @Override
-            public void onEnd(boolean b) {
+            public void onEnd(boolean isWinner) {
                 System.out.println("Game has ended");
             }
 
@@ -66,7 +68,7 @@ public class ExampleBot {
 
 ## Building BWMirror
 
-This is a fair bit involved due to the nature of the project. If you want to contribute to BWMirror, read on.
+This is a fair bit involved due to the nature of the project. If you want to contribute to BWMirror, read on. If you are only interested in writing a Starcraft AI, then you can stop here.
 
 ### Installing Pre-Requisites
 
