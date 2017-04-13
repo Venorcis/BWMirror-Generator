@@ -1,25 +1,17 @@
 package bwapi;
 
-import bwapi.AIModule;
-import bwapi.BWEventListener;
-
 import java.io.*;
 import java.io.File;
 import java.lang.Exception;
 import java.lang.UnsupportedOperationException;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.zip.*;
 
 public class Mirror {
 
     private Game game;
 
     private AIModule module = new AIModule();
-
-    private FrameCallback frameCallback;
-
-    private static final boolean EXTRACT_JAR = true;
 
     private static void extractResourceFile(String resourceFilename, String outputFilename) throws Exception {
         InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceFilename);
@@ -94,6 +86,8 @@ public class Mirror {
             System.exit(1);
         if (!extractBwtaDataFiles())
             System.exit(1);
+
+        initTables();
     }
 
     public Game getGame() {
@@ -105,26 +99,90 @@ public class Mirror {
     }
 
     /**
-     * Starts the API, initializes all constants ( {@link UnitType}, {@link WeaponType} ) and the {@link Game} object.
-     * This method blocks until the end of game.
+     * Initializes all BWAPI constant lookup tables.
      */
-    public native void startGame();
+    private static native void initTables();
 
-    private void update() {
-        if (frameCallback != null) {
-            frameCallback.update();
+    /**
+     * Initializes a connection to Broodwar, initializes the a {@link Game} object, and dispatches
+     * events to your listener as long as Broodwar is in a game. If this method is called before
+     * Broodwar is running, it will keep retrying until an initial connection can be established.
+     *
+     * The {@link Game} instance returned by {@link #getGame()} is only valid while this method
+     * is running. If your code holds a copy of this object anywhere else, do not try to use it
+     * again after this method returns.
+     *
+     * @param autoReconnect 
+     *        If true, will run an infinite loop allowing you to keep your bot running as many 
+     *        subsequent matches as desired. Will automatically reconnect to a Broodwar instance
+     *        if the connection is interrupted.
+     *        If false, will disconnect from Broodwar and return after the first match ends 
+     *        (regardless of how it ended). Will not attempt to reconnect to Broodwar if the 
+     *        connection is interrupted once the first match has been started. You can call
+     *        {@link #startGame} again to run another match as needed.
+     */
+    public void startGame(boolean autoReconnect) {
+        try
+        {
+            System.out.println("Connecting to Broodwar...");
+            reconnect();
+            System.out.println("Connection successful, starting match...");
+
+            game = getInternalGame();
+
+            do {
+                System.out.println("Waiting...");
+                while (!game.isInGame()) {
+                    update();
+                    if (!isConnected()) {
+                        System.out.println("Reconnecting...");
+                        reconnect();
+                    }
+                }
+
+                System.out.println("Game ready!!!");
+
+                while (game.isInGame()) {
+                    processGameEvents();
+
+                    update();
+                    if (!isConnected()) {
+                        System.out.println("Reconnecting...");
+                        reconnect();
+                    }
+                }
+
+                System.out.println("Match ended.");
+            } while(autoReconnect);
+
+            System.out.println("Finished. Disconnecting from Broodwar...");
+        } catch (InterruptedException e) {
+            System.out.println("Interrupted. Disconnecting from Broodwar...");
+        }
+        if (isConnected())
+            disconnect();
+
+        game = null;
+    }
+
+    private void reconnect() throws InterruptedException {
+        while (!connect()) {
+            Thread.sleep(1000);
         }
     }
 
-    /*public void setFrameCallback(bwapi.Mirror.FrameCallback frameCallback) {
-        this.frameCallback = frameCallback;
-    } */
+	/**
+	 * Returns the current connection state to a running Broodwar instance.
+	 */
+    public static native boolean isConnected();
 
-    /**
-     * The simplest interface to receive update event from Broodwar. The {@link #update()} method is called once each frame.
-     * For a simple bot and implementation of this interface is enough, to receive all in game events, implement {@link BWEventListener}.
-     */
-    /*public*/ private interface FrameCallback {
-        public void update();
-    }
+    private static native boolean connect();
+
+    private static native void disconnect();
+
+    private static native void update();
+
+    private native Game getInternalGame();
+
+    private native void processGameEvents();
 }

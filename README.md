@@ -40,6 +40,9 @@ public class ExampleBot {
 
             @Override
             public void onFrame() {
+                // this object is ONLY valid while Mirror.startGame is running
+                // (which is fine 99% of the time, it just means you should only
+                // use it within code that is invoked from these listener methods)
                 Game game = mirror.getGame();
                 Player self = game.self();
 
@@ -47,12 +50,16 @@ public class ExampleBot {
             }
         });
 
-        // blocks indefinitely
-        mirror.startGame();
+        // if you pass true, blocks indefinitely and keeps Broodwar instance
+        // connection to keep playing subsequent matches.
+        // if you pass false, startGame will return after a single match and
+        // disconnects from the Broodwar instance. you can call startGame as
+        // many times as you wish in this case.
+        mirror.startGame(true);
     }
 
     public static void main(String... args) {
-        new TestBot().run();
+        new ExampleBot().run();
     }
 }
 ```
