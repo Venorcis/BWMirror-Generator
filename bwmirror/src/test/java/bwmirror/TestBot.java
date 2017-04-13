@@ -138,7 +138,7 @@ public class TestBot {
             }
         });
           */
-        mirror.startGame();
+        mirror.startGame(false);
         System.out.println("It's over");
     }
 
