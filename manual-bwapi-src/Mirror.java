@@ -113,8 +113,9 @@ public class Mirror {
 
     /**
      * Initializes a connection to Broodwar, initializes the a {@link Game} object, and dispatches
-     * events to your listener as long as Broodwar is in a game. If this method is called before
-     * Broodwar is running, it will keep retrying until an initial connection can be established.
+     * events to your listener as long as Broodwar is in a game. Will automatically attempt to 
+     * reconnect to Broodwar if the connection is lost at any point. If this method is called 
+     * before Broodwar is running, will wait until an initial connection can be established.
      *
      * The {@link Game} instance returned by {@link #getGame()} is only valid while this method
      * is running. If your code holds a copy of this object anywhere else, do not try to use it
@@ -122,12 +123,10 @@ public class Mirror {
      *
      * @param returnOnMatchEnd
      *        If true, will disconnect from Broodwar and return after the first match ends
-     *        (regardless of how it ended). Will not attempt to reconnect to Broodwar if the
-     *        connection is interrupted once the first match has been started. You can call
-     *        {@link #startGame} again to run another match as needed.
+     *        (regardless of how it ended). You can call {@link #startGame} again to run another
+     *        match as needed.
      *        If false, will run an infinite loop allowing you to keep your bot running as many
-     *        subsequent matches as desired. Will automatically reconnect to a Broodwar instance
-     *        if the connection is interrupted.
+     *        subsequent matches as desired.
      */
     public void startGame(boolean returnOnMatchEnd) {
         System.out.println(LOG_TAG + "Connecting to Broodwar...");
