@@ -145,11 +145,6 @@ public class Mirror {
             System.out.println(LOG_TAG + "Match already running.");
 
         while (true) {
-            if (Thread.interrupted()) {
-                System.out.println(LOG_TAG + "Interrupted.");
-                break;
-            }
-
             if (!inGame) {
                 if (previouslyInGame) {
                     System.out.println(LOG_TAG + "Match ended.");
@@ -172,6 +167,11 @@ public class Mirror {
                 reconnect();
             }
 
+            if (Thread.interrupted()) {
+                System.out.println(LOG_TAG + "Interrupted.");
+                break;
+            }
+
             previouslyInGame = inGame;
             inGame = game.isInGame();
         }
@@ -192,6 +192,9 @@ public class Mirror {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
+                // needed to set the interrupt status of this thread.
+                // else, subsequent calls to Thread.interrupted() will return false.
+                Thread.currentThread().interrupt();
                 return false;
             }
         }
