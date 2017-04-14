@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 
 public class Mirror {
 
+    public static final String LOG_TAG = "[BWMirror] ";
+
     private Game game;
 
     private AIModule module = new AIModule();
@@ -34,16 +36,16 @@ public class Mirror {
 
     private static boolean extractAndLoadNativeLibraries() {
         try {
-            System.out.println("Extracting bwapi_bridge.dll");
+            System.out.println(LOG_TAG + "Extracting bwapi_bridge.dll");
             extractResourceFile("bwapi_bridge.dll", "./bwapi_bridge.dll");
 
-            System.out.println("Extracting libgmp-10.dll");
+            System.out.println(LOG_TAG + "Extracting libgmp-10.dll");
             extractResourceFile("libgmp-10.dll", "./libgmp-10.dll");
 
-            System.out.println("Extracting libmpfr-4.dll");
+            System.out.println(LOG_TAG + "Extracting libmpfr-4.dll");
             extractResourceFile("libmpfr-4.dll", "./libmpfr-4.dll");
 
-            System.out.println("Loading native library bwapi_bridge.dll");
+            System.out.println(LOG_TAG + "Loading native library bwapi_bridge.dll");
             System.load(new File("./bwapi_bridge.dll").getAbsolutePath());
 
         } catch (Exception e) {
@@ -58,11 +60,11 @@ public class Mirror {
         try {
             Collection<String> bwtaFilenames = ResourceList.getResources(Pattern.compile("bwapi\\-data/BWTA2/[a-zA-Z0-9]+\\.bwta"));
 
-            System.out.println("Creating ./bwapi-data/BWTA2 directory");
+            System.out.println(LOG_TAG + "Creating ./bwapi-data/BWTA2 directory");
             new File("./bwapi-data/BWTA2").mkdirs();
 
             for (String filename : bwtaFilenames) {
-                System.out.println("Extracting " + filename);
+                System.out.println(LOG_TAG + "Extracting " + filename);
                 String outputFilename = "./" + filename;
                 extractResourceFile(filename, outputFilename);
             }
@@ -92,6 +94,7 @@ public class Mirror {
         if (!extractBwtaDataFiles())
             System.exit(1);
 
+        System.out.println(LOG_TAG + "Initializing constants tables.");
         initTables();
     }
 
@@ -127,11 +130,11 @@ public class Mirror {
      *        if the connection is interrupted.
      */
     public void startGame(boolean returnOnMatchEnd) {
-        System.out.println("Connecting to Broodwar...");
+        System.out.println(LOG_TAG + "Connecting to Broodwar...");
         if (reconnect())
-            System.out.println("Connection successful, starting match...");
+            System.out.println(LOG_TAG + "Connection successful, starting match...");
         else {
-            System.out.println("Connection attempt aborted.");
+            System.out.println(LOG_TAG + "Connection attempt aborted.");
             return;
         }
 
@@ -140,17 +143,17 @@ public class Mirror {
         boolean inGame = game.isInGame();
         boolean previouslyInGame = inGame;
         if (inGame)
-            System.out.println("Match already running.");
+            System.out.println(LOG_TAG + "Match already running.");
 
         while (true) {
             if (Thread.interrupted()) {
-                System.out.println("Interrupted.");
+                System.out.println(LOG_TAG + "Interrupted.");
                 break;
             }
 
             if (!inGame) {
                 if (previouslyInGame) {
-                    System.out.println("Match ended.");
+                    System.out.println(LOG_TAG + "Match ended.");
                     if (returnOnMatchEnd)
                         break;
                 }
@@ -159,14 +162,14 @@ public class Mirror {
 
             } else {
                 if (!previouslyInGame)
-                    System.out.println("Game ready!!!");
+                    System.out.println(LOG_TAG + "Game ready!!!");
 
                 processGameEvents();
                 update();
             }
 
             if (!isConnected()) {
-                System.out.println("Reconnecting...");
+                System.out.println(LOG_TAG + "Reconnecting...");
                 reconnect();
             }
 
@@ -174,15 +177,15 @@ public class Mirror {
             inGame = game.isInGame();
         }
 
-        System.out.println("Finished.");
-        System.out.println("Disconnecting from Broodwar...");
+        System.out.println(LOG_TAG + "Finished.");
+        System.out.println(LOG_TAG + "Disconnecting from Broodwar...");
 
         if (isConnected())
             disconnect();
 
         game = null;
 
-        System.out.println("Returning...");
+        System.out.println(LOG_TAG + "Returning...");
     }
 
     private boolean reconnect() {

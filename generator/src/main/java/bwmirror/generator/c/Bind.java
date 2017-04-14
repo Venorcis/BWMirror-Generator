@@ -48,7 +48,6 @@ public class Bind {
 
     private void implementMirror_initTables(List<CDeclaration> declarationList) {
         out.println("JNIEXPORT void JNICALL Java_" + context.getPackageName() + "_Mirror_initTables(JNIEnv * env, jclass jclz){");
-        out.println("   println(\"Initializing constants tables\");");
         implementVariablesBind(declarationList);
         out.println("}");
         out.println();
