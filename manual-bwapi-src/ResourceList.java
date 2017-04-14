@@ -43,8 +43,7 @@ public class ResourceList {
         return retval;
     }
 
-    private static Collection<String> getResources(final String element,
-                                                   final Pattern pattern) {
+    private static Collection<String> getResources(final String element, final Pattern pattern) {
         final ArrayList<String> retval = new ArrayList<>();
         final File file = new File(element);
         if (file.isDirectory()) {
@@ -55,8 +54,16 @@ public class ResourceList {
                 throw new java.lang.Error(e);
             }
             retval.addAll(getResourcesFromDirectory(file, baseDirectory, pattern));
-        } else {
+        } else if (file.isFile()) {
             retval.addAll(getResourcesFromJarFile(file, pattern));
+        } else {
+            // if 'element' did not point to an existing file or directory, we don't
+            // add anything to the list of resources to return
+            // sometimes, build tools / IDEs that start up a java process will
+            // specifically add classpath entries that do not point to files/directories
+            // that exist (e.g. Leiningen adds a 'test' directory to the classpath
+            // and this will be listed in 'java.class.path', whether it exists or not).
+            // so it is actually pretty important that we not throw an exception here!
         }
         return retval;
     }
