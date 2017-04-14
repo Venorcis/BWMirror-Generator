@@ -41,6 +41,7 @@ public class ClassMirror extends Mirror {
         out.println();
         writeFields(cClass.getFields());
         if (!cClass.isStatic()) {
+            writeEqualsAndHashCodeMethods();
             writeInstanceMap();
             writeConstructor();
             writeInstanceGetter();
@@ -51,6 +52,73 @@ public class ClassMirror extends Mirror {
 
         out.close();
         nativeBinds = null;
+    }
+
+    private void writeEqualsMethodBeginning() {
+        out.println(INTEND + "@Override");
+        out.println(INTEND + "public boolean equals(Object o) {");
+        out.println(INTEND + INTEND + "if (this == o) return true;");
+        out.println(INTEND + INTEND + "if (o == null || getClass() != o.getClass()) return false;");
+        out.println();
+        out.println(INTEND + INTEND + cClass.getName() + " other = (" + cClass.getName() + ")o;");
+        out.println();
+    }
+
+    private void writeEqualsMethodEnding() {
+        out.println();
+        out.println(INTEND + INTEND + "return true;");
+        out.println(INTEND + "}");
+    }
+
+    private void writeHashCodeMethodBeginning() {
+        out.println();
+        out.println(INTEND + "@Override");
+        out.println(INTEND + "public int hashCode() {");
+        out.println(INTEND + INTEND + "int result;");
+    }
+
+    private void writeHashCodeMethodEnding() {
+        out.println(INTEND + INTEND + "return result;");
+        out.println(INTEND + "}");
+        out.println();
+    }
+
+    // for the simpler cases where the BWAPI object has an ID, and our equality test
+    // only needs to be a comparison of this ID. ID is assumed to be an int
+    private void writeEqualsAndHashCodeMethodsForObjWithID() {
+        writeEqualsMethodBeginning();
+        out.println(INTEND + INTEND + "if (getID() != other.getID()) return false;");
+        writeEqualsMethodEnding();
+        writeHashCodeMethodBeginning();
+        out.println(INTEND + INTEND + "result = getID();");
+        writeHashCodeMethodEnding();
+    }
+
+    // HACK: manually stuffing in some implementations for specific classes for now.
+    //       it would probably take a fair bit of work to rig up some general-purpose
+    //       solution for all classes ....
+    private void writeEqualsAndHashCodeMethods() {
+        String className = cClass.getName();
+        String packageName = context.getPackage();
+
+        if (className.equals("BaseLocation")) {
+            writeEqualsMethodBeginning();
+            out.println(INTEND + INTEND + "if (!getPosition().equals(other.getPosition())) return false;");
+            writeEqualsMethodEnding();
+            writeHashCodeMethodBeginning();
+            out.println(INTEND + INTEND + "result = getPosition().hashCode();");
+            writeHashCodeMethodEnding();
+        } else if (className.equals("Bullet")) {
+            writeEqualsAndHashCodeMethodsForObjWithID();
+        } else if (className.equals("Force")) {
+            writeEqualsAndHashCodeMethodsForObjWithID();
+        } else if (className.equals("Player")) {
+            writeEqualsAndHashCodeMethodsForObjWithID();
+        } else if (className.equals("Region") && packageName.equals("bwapi")) {
+            writeEqualsAndHashCodeMethodsForObjWithID();
+        } else if (className.equals("Unit")) {
+            writeEqualsAndHashCodeMethodsForObjWithID();
+        }
     }
 
     private void writeInstanceMap() {
