@@ -70,6 +70,25 @@ public class ExampleBot {
 
 This is a fair bit involved due to the nature of the project. If you want to contribute to BWMirror, read on. If you are only interested in writing a Starcraft AI, then you can stop here.
 
+### Introduction: How This All Works
+
+Basically, in this repository the `/bwmirror` directory contains the final BWMirror Java library. However, you will find it's missing basically all of the code!
+
+This is because BWMirror consists largely of code that is _automatically generated_ from BWAPI and BWTA2 C++ header files.  The generator project under `/generator` is where all of this code generation occurs. 
+
+The generator project works by parsing the C++ header files and building a list of classes and methods that exist on the C++ side of things. Then these are translated into equivalent "mirror" Java classes. These mirror classes will contain public Java methods that bots will use. As well, there will be an equivalent number of private `native` methods which is where JNI code will be used to call the actual BWAPI/BWTA2 libraries. Note that there are a small number of Java classes that were manually developed and do not contain automatically generated code. These classes are simply copied into the BWMirror project as-is and their source is located under `/manual-bwapi-src`.
+
+`javah` is used to generate JNI function declarations for all of these `native` Java class methods, and then a JNI C++ implementation file, `impl.cpp` is generated with almost all automatically generated function implementations (since the vast majority of these are really basic and simply call BWAPI/BWTA2 functions with the same number of parameters, etc). A very small number of functions in `impl.cpp` are manually implemented using specially-crafted code.
+
+A Visual Studio 2013 project is also included in `/bwapi_bridge` which needs to be used to compile the automatically generated JNI C++ code into a DLL.
+
+All of the automatically generated Java code and the JNI DLL are automatically placed into the appropriate places in the `/bwmirror` directory. Once all of this is done, the BWMirror library simply needs to be built.
+
+> **NOTE:** Generally speaking, you should not be directly editing code under `/bwmirror` or `/output` unless you're just testing/debugging quick changes. This is due to the fact that all of the code in there is automatically being generated/copied.
+> 
+> The "proper" way to make changes to BWMirror is to modify the generator project and/or edit the Java classes under `/manual-bwapi-src`.
+
+
 ### Installing Pre-Requisites
 
 There are a number of pre-requisites needed before you can get started with the things in this repository.
@@ -105,7 +124,6 @@ Download the installer "BWAPI_412_Setup.exe" and install BWAPI. Take note of whe
 https://bitbucket.org/auriarte/bwta2/downloads/
 
 Download and extract the BWTA files somewhere and take note of the location you extracted them to, creating a `BWTA_HOME` environment variable that points to this same location. e.g. "C:\dev\BWTAlib_2.2"
-
 
 ### Running the Generator
 
