@@ -76,11 +76,17 @@ public class Mirror {
         return true;
     }
 
+    public static boolean is64BitJRE() {
+        String bits = System.getProperty("sun.arch.data.model");
+        if (bits == null)
+            return System.getProperty("java.vm.name").contains("64");
+        else
+            return bits.equals("64");
+    }
+
     static {
-        String arch = System.getProperty("os.arch");
-        if(!arch.equals("x86")){
-            throw new UnsupportedOperationException("BWMirror API supports only x86 architecture.");
-        }
+        if (is64BitJRE())
+            throw new UnsupportedOperationException("BWMirror must be run on a 32-bit JRE/JDK.");
 
         if (!extractAndLoadNativeLibraries())
             System.exit(1);
