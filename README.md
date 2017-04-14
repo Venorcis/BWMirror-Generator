@@ -52,9 +52,9 @@ public class ExampleBot {
             }
         });
 
-        // if you pass true, blocks indefinitely and keeps Broodwar instance
-        // connection to keep playing subsequent matches.
-        // if you pass false, startGame will return after a single match and
+        // if you pass false, blocks indefinitely and keeps a Broodwar 
+        // instance connection to keep playing subsequent matches.
+        // if you pass true, startGame will return after a single match and
         // disconnects from the Broodwar instance. you can call startGame as
         // many times as you wish in this case.
         mirror.startGame(true);
