@@ -117,63 +117,83 @@ public class Mirror {
      * is running. If your code holds a copy of this object anywhere else, do not try to use it
      * again after this method returns.
      *
-     * @param autoReconnect 
-     *        If true, will run an infinite loop allowing you to keep your bot running as many 
-     *        subsequent matches as desired. Will automatically reconnect to a Broodwar instance
-     *        if the connection is interrupted.
-     *        If false, will disconnect from Broodwar and return after the first match ends 
-     *        (regardless of how it ended). Will not attempt to reconnect to Broodwar if the 
+     * @param returnOnMatchEnd
+     *        If true, will disconnect from Broodwar and return after the first match ends
+     *        (regardless of how it ended). Will not attempt to reconnect to Broodwar if the
      *        connection is interrupted once the first match has been started. You can call
      *        {@link #startGame} again to run another match as needed.
+     *        If false, will run an infinite loop allowing you to keep your bot running as many
+     *        subsequent matches as desired. Will automatically reconnect to a Broodwar instance
+     *        if the connection is interrupted.
      */
-    public void startGame(boolean autoReconnect) {
-        try
-        {
-            System.out.println("Connecting to Broodwar...");
-            reconnect();
+    public void startGame(boolean returnOnMatchEnd) {
+        System.out.println("Connecting to Broodwar...");
+        if (reconnect())
             System.out.println("Connection successful, starting match...");
-
-            game = getInternalGame();
-
-            do {
-                System.out.println("Waiting...");
-                while (!game.isInGame()) {
-                    update();
-                    if (!isConnected()) {
-                        System.out.println("Reconnecting...");
-                        reconnect();
-                    }
-                }
-
-                System.out.println("Game ready!!!");
-
-                while (game.isInGame()) {
-                    processGameEvents();
-
-                    update();
-                    if (!isConnected()) {
-                        System.out.println("Reconnecting...");
-                        reconnect();
-                    }
-                }
-
-                System.out.println("Match ended.");
-            } while(autoReconnect);
-
-            System.out.println("Finished. Disconnecting from Broodwar...");
-        } catch (InterruptedException e) {
-            System.out.println("Interrupted. Disconnecting from Broodwar...");
+        else {
+            System.out.println("Connection attempt aborted.");
+            return;
         }
+
+        game = getInternalGame();
+
+        boolean inGame = game.isInGame();
+        boolean previouslyInGame = inGame;
+        if (inGame)
+            System.out.println("Match already running.");
+
+        while (true) {
+            if (Thread.interrupted()) {
+                System.out.println("Interrupted.");
+                break;
+            }
+
+            if (!inGame) {
+                if (previouslyInGame) {
+                    System.out.println("Match ended.");
+                    if (returnOnMatchEnd)
+                        break;
+                }
+
+                update();
+
+            } else {
+                if (!previouslyInGame)
+                    System.out.println("Game ready!!!");
+
+                processGameEvents();
+                update();
+            }
+
+            if (!isConnected()) {
+                System.out.println("Reconnecting...");
+                reconnect();
+            }
+
+            previouslyInGame = inGame;
+            inGame = game.isInGame();
+        }
+
+        System.out.println("Finished.");
+        System.out.println("Disconnecting from Broodwar...");
+
         if (isConnected())
             disconnect();
 
         game = null;
+
+        System.out.println("Returning...");
     }
 
-    private void reconnect() throws InterruptedException {
+    private boolean reconnect() {
         while (!connect()) {
-            Thread.sleep(1000);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                return false;
+            }
         }
+        return true;
     }
 
 	/**
