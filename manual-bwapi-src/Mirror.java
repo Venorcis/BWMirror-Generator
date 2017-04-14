@@ -61,9 +61,8 @@ public class Mirror {
             System.out.println("Creating ./bwapi-data/BWTA2 directory");
             new File("./bwapi-data/BWTA2").mkdirs();
 
-            System.out.println("Extracting " + bwtaFilenames.size() + " BWTA2 files:");
             for (String filename : bwtaFilenames) {
-                System.out.println(filename);
+                System.out.println("Extracting " + filename);
                 String outputFilename = "./" + filename;
                 extractResourceFile(filename, outputFilename);
             }
