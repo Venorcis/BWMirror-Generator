@@ -48,7 +48,10 @@ public class Bind {
 
     private void implementMirror_initTables(List<CDeclaration> declarationList) {
         out.println("JNIEXPORT void JNICALL Java_" + context.getPackageName() + "_Mirror_initTables(JNIEnv * env, jclass jclz){");
+        out.println("if (areTypeTablesInitialized) return;");
         implementVariablesBind(declarationList);
+        out.println("areTypeTablesInitialized = true;");
+        out.println("println(\"BWMirror lookup tables are initialized.\");");
         out.println("}");
         out.println();
     }
@@ -196,6 +199,7 @@ public class Bind {
                         out.println("getId = env->GetMethodID(cls,\"<init>\", \"(III)V\");");
                     } else {
                         out.println("getId = env->GetStaticMethodID(cls, \"get\", \"(J)L" + context.getPackageName() + "/" + cClass.getName() + ";\");");
+                        out.println("table" + cClass.getName() + ".clear();");
                     }
                     printedIntro = true;
                 }

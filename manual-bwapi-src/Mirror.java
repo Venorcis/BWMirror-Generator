@@ -109,7 +109,7 @@ public class Mirror {
     /**
      * Initializes all BWAPI constant lookup tables.
      */
-    private static native void initTables();
+    public static native void initTables();
 
     /**
      * Initializes a connection to Broodwar, initializes the a {@link Game} object, and dispatches

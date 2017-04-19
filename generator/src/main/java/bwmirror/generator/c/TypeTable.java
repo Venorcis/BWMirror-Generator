@@ -28,6 +28,8 @@ public class TypeTable {
             }
         }
         out.println();
+        out.println("bool areTypeTablesInitialized = false;");
+        out.println();
     }
 
     private void checkTypeTable(CClass cClass) {
