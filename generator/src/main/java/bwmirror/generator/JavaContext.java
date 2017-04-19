@@ -19,7 +19,7 @@ public class JavaContext {
 
     private List<String> valueTypes = Arrays.asList("Position", "TilePosition", "WalkPosition", "Color", "BWTA::RectangleArray<double>", "PositionOrUnit", "Point", "UnitCommand", "Integer", "Long", "Double", "Boolean", "int", "void", "double", "long", "Pair");
 
-    private List<String> constantTypes = Arrays.asList("UnitType", "TechType", "UpgradeType", "Race", "UnitCommand", "WeaponType", "Order", "GameType", "Error", "PlayerType", "UnitCommandType");
+    private List<String> constantTypes = Arrays.asList("UnitType", "TechType", "UpgradeType", "Race", "UnitCommand", "WeaponType", "Order", "GameType", "Error", "PlayerType", "UnitCommandType", "UnitSizeType", "DamageType", "ExplosionType");
 
     private List<String> enumTypes = Arrays.asList("MouseButton", "Key", "bwapi.Text.Size.Enum", "bwapi.CoordinateType.Enum", "Text::Size::Enum", "CoordinateType::Enum");
 
