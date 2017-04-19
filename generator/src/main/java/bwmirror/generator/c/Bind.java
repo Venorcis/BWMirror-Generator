@@ -61,7 +61,7 @@ public class Bind {
                 "JNIEXPORT jobject JNICALL Java_" + context.getPackageName() + "_Mirror_getInternalGame(JNIEnv * env, jobject obj){\n" +
                 "   jclass gamecls = env->FindClass(\"Lbwapi/Game;\");\n" +
                 "   jmethodID getMethodID = env->GetStaticMethodID(gamecls, \"get\", \"(J)Lbwapi/Game;\");\n" +
-                "   return env->CallStaticObjectMethod(gamecls, getMethodID, (long)BroodwarPtr);\n" +
+                "   return env->CallStaticObjectMethod(gamecls, getMethodID, (jlong)BroodwarPtr);\n" +
                 "}\n"
         );
         out.println();

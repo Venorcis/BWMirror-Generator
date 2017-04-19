@@ -382,7 +382,7 @@ public class CallImplementer {
             out.println("*it;");
         }
         if (!javaContext.isValueType(genericType)) {
-            out.println("jobject elem = env->CallStaticObjectMethod(elemClass, getMethodID, (long)elem_ptr) ;");
+            out.println("jobject elem = env->CallStaticObjectMethod(elemClass, getMethodID, (jlong)elem_ptr) ;");
         } else {
             out.println("jobject elem = env->NewObject(elemClass, elemConsID" + javaContext.implementCopyReturn(genericType, "elem_ptr") + ")" + SEMICOLON);
         }
