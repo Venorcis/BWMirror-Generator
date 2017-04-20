@@ -60,7 +60,12 @@ public class CallImplementer {
                 "#include <jni.h>\n" +
                 "#include <cstring>\n" +
                 "\n" +
-                "using namespace BWAPI;\n\n");
+                "using namespace BWAPI;\n\n" +
+                "\n" +
+                "bool IdentityUnitFilter(Unit u) {\n" +
+                "\treturn true;\n" +
+                "}\n" +
+                "\n");
     }
 
     private void implementAccessObject(String clsName, String objName) {
@@ -505,6 +510,8 @@ public class CallImplementer {
             String genericType = convertToBWTA(Generic.extractGeneric(javaRetType));
             if (javaPackageName.equals("bwta") || (!genericType.equals("UnitType") && !genericType.equals("Position") && !genericType.equals("TilePosition"))){
                 out.print(wrapInCCollection(genericType, javaMethodName) + " cresult = " + objectAccessor + (javaContext.isSelfReturnType(clsName, javaMethodName) ? "" : javaMethodName + "("));
+                if (javaContext.needsExtraFilterParameter(javaMethodName))
+                    params.add(javaContext.getExtraFilterParameter(javaMethodName));
                 implementRealParams(params);
                 if (!javaContext.isSelfReturnType(clsName, javaMethodName)) {
                     out.print(")");

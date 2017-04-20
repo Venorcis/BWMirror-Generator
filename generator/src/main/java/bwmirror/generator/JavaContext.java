@@ -1,11 +1,13 @@
 package bwmirror.generator;
 
+import bwmirror.c.Param;
 import bwmirror.util.Generic;
 import bwmirror.util.PointerTest;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,6 +31,8 @@ public class JavaContext {
 
     private List<String> selfReturnTypes = Arrays.asList("BWTA::Polygon");
 
+    private Map<String, Param> requiresExplicitDummyPredicate = new HashMap<>();
+
 
     private String packageName = "bwapi";
 
@@ -39,6 +43,8 @@ public class JavaContext {
         javaToCType.put("void", "void");
         javaToCType.put("boolean", "jboolean");
         javaToCType.put("String", "jstring");
+
+        requiresExplicitDummyPredicate.put("getUnitsInWeaponRange", new Param("", "IdentityUnitFilter"));
     }
 
     public boolean isSelfReturnType(String clsName, String methodName) {
@@ -92,6 +98,10 @@ public class JavaContext {
     public boolean isConstantTye(String javaType) {
         return constantTypes.contains(javaType);
     }
+
+    public boolean needsExtraFilterParameter(String methodName) { return requiresExplicitDummyPredicate.containsKey(methodName); }
+
+    public Param getExtraFilterParameter(String methodName) { return requiresExplicitDummyPredicate.get(methodName); }
 
     public String ptrCType() {
         return "jobject";
