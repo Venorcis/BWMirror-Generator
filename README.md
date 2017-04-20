@@ -14,7 +14,7 @@ If your project uses Maven, you can add a dependency to BWMirror:
 <dependency>
     <groupId>com.github.gered</groupId>
     <artifactId>bwmirror</artifactId>
-    <version>2.7</version>
+    <version>2.7.1</version>
 </dependency>
 ```
 
