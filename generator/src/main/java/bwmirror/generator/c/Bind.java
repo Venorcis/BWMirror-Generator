@@ -51,7 +51,7 @@ public class Bind {
         out.println("if (areTypeTablesInitialized) return;");
         implementVariablesBind(declarationList);
         out.println("areTypeTablesInitialized = true;");
-        out.println("println(\"BWMirror lookup tables are initialized.\");");
+        out.println("println(\"BWMirror C++ lookup tables are now initialized.\");");
         out.println("}");
         out.println();
     }

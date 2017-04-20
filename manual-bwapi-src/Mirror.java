@@ -63,8 +63,8 @@ public class Mirror {
             System.out.println(LOG_TAG + "Creating ./bwapi-data/BWTA2 directory");
             new File("./bwapi-data/BWTA2").mkdirs();
 
+            System.out.println("Extracting " + bwtaFilenames.size() + " BWTA2 files to ./bwapi-data/BWTA2");
             for (String filename : bwtaFilenames) {
-                System.out.println(LOG_TAG + "Extracting " + filename);
                 String outputFilename = "./" + filename;
                 extractResourceFile(filename, outputFilename);
             }
@@ -94,7 +94,6 @@ public class Mirror {
         if (!extractBwtaDataFiles())
             System.exit(1);
 
-        System.out.println(LOG_TAG + "Initializing constants tables.");
         initTables();
     }
 
